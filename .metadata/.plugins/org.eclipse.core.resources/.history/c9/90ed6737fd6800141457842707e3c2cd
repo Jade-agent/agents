@@ -1,0 +1,14 @@
+import jade.core.behaviours.SimpleBehaviour;
+
+
+public class GetAddressesBehaviour extends SimpleBehaviour {
+	
+	public void action(){
+		String[] addresses = this.myAgent.getAMS().getAddressesArray();
+		getDataStore().put("addresses", addresses);
+	}
+	
+	public Bool done(){
+		return false;
+	}
+}

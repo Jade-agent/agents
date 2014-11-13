@@ -1,0 +1,6 @@
+import jade.core.behaviours.TickerBehaviour;
+
+
+public class PrintNameBehaviour extends TickerBehaviour{
+
+}

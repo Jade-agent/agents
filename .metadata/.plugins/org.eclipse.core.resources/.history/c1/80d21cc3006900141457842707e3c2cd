@@ -1,0 +1,46 @@
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import jade.core.Agent;
+import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.FSMBehaviour;
+import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.SequentialBehaviour;
+import jade.core.behaviours.TickerBehaviour;
+import jade.util.leap.Iterator;
+
+
+public class GamerAgent extends Agent {
+	private static final long serialVersionUID = 1L;
+	public int sleepyness = 100;
+	int hunger = 0;
+
+	public void setup(){
+		super.setup();
+		FSMBehaviour fsm = new FSMBehaviour(agent);
+		
+		Behaviour sleep = new TickerBehaviour(this, 1000) {
+			
+			@Override
+			protected void onTick() {
+				this.myAgent.sleepyness--;
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		fsm.registerFirstState(sleep, "sleeping");
+		
+		Behaviour eat = new OneShotBehaviour() {
+			
+			@Override
+			public void action() {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+	}
+	
+	public void init(){
+	}
+}

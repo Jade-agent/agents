@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;HelloAgent&apos; to &apos;GamerAgent&apos;&#x0A;- Original project: &apos;FiniteGamer&apos;&#x0A;- Original element: &apos;HelloAgent&apos;&#x0A;- Renamed element: &apos;GamerAgent&apos;&#x0A;- Update references to refactored element&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;HelloAgent&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;{HelloAgent.java[HelloAgent" matchStrategy="1" name="GamerAgent" qualified="false" references="true" similarDeclarations="false" stamp="1415640817554" textual="false" version="1.0"/>
+</session>

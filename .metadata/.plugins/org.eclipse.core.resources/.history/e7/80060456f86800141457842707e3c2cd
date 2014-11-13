@@ -1,0 +1,14 @@
+import jade.core.behaviours.TickerBehaviour;
+
+
+public class PrintNameBehaviour extends TickerBehaviour{
+	public void onTick(){
+		System.out.println("Name: " + getLocalName());
+		/*if (getLocalName().equals("HelloMan")){
+			System.out.println("Tick");
+		}
+		else {
+			System.out.println("Tack");
+		}*/
+	}
+}

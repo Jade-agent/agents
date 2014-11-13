@@ -1,0 +1,22 @@
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import jade.core.Agent;
+import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.SequentialBehaviour;
+import jade.core.behaviours.TickerBehaviour;
+import jade.util.leap.Iterator;
+
+
+public class GamerAgent extends Agent {
+	private static final long serialVersionUID = 1L;
+
+	public void setup(){
+		super.setup();
+	
+	}
+	
+	public void init(){
+	}
+}

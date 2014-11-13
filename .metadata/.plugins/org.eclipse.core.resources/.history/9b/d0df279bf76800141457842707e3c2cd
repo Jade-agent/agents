@@ -1,0 +1,18 @@
+import jade.core.behaviours.OneShotBehaviour;
+
+
+public class PrintAllAddressBehaviour extends OneShotBehaviour {
+		private Agent agent;
+	
+		public void PrintAllAddressBehaviour(agent){
+			this.agent = agent;
+		}
+	
+		@Override
+		public void action() {
+			String[] addresses = getAMS().getAddressesArray();
+			for (String address : addresses){
+				System.out.println("Address:" + address);
+			}			
+		}
+}

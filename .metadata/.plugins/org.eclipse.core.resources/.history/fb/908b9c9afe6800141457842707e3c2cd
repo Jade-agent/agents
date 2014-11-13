@@ -1,0 +1,19 @@
+import jade.core.behaviours.SimpleBehaviour;
+
+
+public class PrintAddressesBehaviour extends SimpleBehaviour {
+	boolean done = false;
+	
+	public void action(){
+		String[] addresses = (String[]) getDataStore().get("addresses");
+		
+		for (String address : addresses){
+			System.out.println("Address:" + address);
+		}	
+		done = true;
+	}
+	
+	public boolean done(){
+		return done;
+	}
+}
