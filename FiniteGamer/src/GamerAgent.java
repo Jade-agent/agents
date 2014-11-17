@@ -38,7 +38,7 @@ public class GamerAgent extends Agent {
 			@Override
 			public void onTick() {
 				GamerAgent agent = (GamerAgent)this.myAgent;
-				agent.sleepyness--;
+				agent.sleepyness -= 10;
 				System.out.println(agent.sleepyness + " sleeping");
 				if (agent.sleepyness == 0){
 					this.stop();
@@ -46,8 +46,7 @@ public class GamerAgent extends Agent {
 			}
 			public int onEnd(){
 				System.out.println("Done Sleeping");
-				//TODO This is stupid:
-				sleepyness = 0;
+				this.reset();
 				return 0;
 			}
 		};
@@ -116,7 +115,7 @@ public class GamerAgent extends Agent {
 				for (int i=0; i<10; i++){
 					thirstyness += 25;
 					hungryness += 25;
-					sleepyness += 25;
+					sleepyness += 1;
 					System.out.println("In the gaaming zone: "+i);
 				}
 			}
