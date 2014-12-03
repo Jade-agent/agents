@@ -1,9 +1,0 @@
-import jade.core.behaviours.OneShotBehaviour;
-
-
-public class GetAddressesBehaviour extends OneShotBehaviour {
-	
-	public void action(){
-	String[] addresses = this.myAgent.getAMS().getAddressesArray();
-	}
-}
