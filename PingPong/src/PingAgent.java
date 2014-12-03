@@ -3,6 +3,7 @@ import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.core.behaviours.SimpleBehaviour;
+import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -14,19 +15,21 @@ public class PingAgent extends Agent {
 	public void setup() {
 		this.addBehaviour(new SendOutPingsBehaviour());
 	}
-	
-	private class SendOutPingsBehaviour extends SequentialBehaviour implements Serializable {
+
+	private class SendOutPingsBehaviour extends SequentialBehaviour implements
+			Serializable {
 		private static final long serialVersionUID = 1L;
 		private AID pongAgent = null;
-		
-		private void findPongAgent(){
+
+		private void findAndSetPongAgent() {
 			DFAgentDescription template = new DFAgentDescription();
 			ServiceDescription sd = new ServiceDescription();
 			sd.setType("Reply-To-Ping-Service");
 			template.addServices(sd);
 
 			try {
-				DFAgentDescription[] dfds = DFService.search(this.myAgent, template);
+				DFAgentDescription[] dfds = DFService.search(this.myAgent,
+						template);
 
 				if (dfds.length > 0) {
 					pongAgent = dfds[0].getName();
@@ -41,20 +44,25 @@ public class PingAgent extends Agent {
 			this.addSubBehaviour(new SimpleBehaviour() {
 
 				public void action() {
-					findPongAgent();
-				} 
-				
+					findAndSetPongAgent();
+				}
+
 				public boolean done() {
-					return pongAgent == null? false : true;
+					return pongAgent == null ? false : true;
 				}
 			});
-			this.addSubBehaviour(new OneShotBehaviour(){
-				public void action(){
-					jade.lang.acl.ACLMessage message = new jade.lang.acl.ACLMessage (jade.lang.acl.ACLMessage.REQUEST);
+			this.addSubBehaviour(new TickerBehaviour((Agent) this.myAgent, 2000) {
+
+				@Override
+				protected void onTick() {
+					jade.lang.acl.ACLMessage message = new jade.lang.acl.ACLMessage(
+							jade.lang.acl.ACLMessage.INFORM);
 					message.addReceiver(pongAgent);
 					message.setContent("Ping");
-					this.myAgent.send(message);				
+					this.myAgent.send(message);
+
 				}
+
 			});
 		}
 
@@ -63,6 +71,5 @@ public class PingAgent extends Agent {
 			this.pongAgent = null;
 		}
 	}
-
 
 }
