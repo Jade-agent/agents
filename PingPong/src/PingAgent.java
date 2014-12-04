@@ -1,5 +1,6 @@
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.SequentialBehaviour;
 import jade.core.behaviours.SimpleBehaviour;
@@ -8,18 +9,36 @@ import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import jade.util.leap.Serializable;
 
 public class PingAgent extends Agent {
+	
+	private SendOutPingsBehaviour sopb;
+
 
 	public void setup() {
-		this.addBehaviour(new SendOutPingsBehaviour());
+		sopb = new SendOutPingsBehaviour(100);
+		this.addBehaviour(sopb);
+		this.addBehaviour(new ReplyToAnswerBehaviour());
+	}
+	
+	private void changeBehaviourToGoSlower(){
+		this.removeBehaviour(sopb);
+		sopb = new SendOutPingsBehaviour(3000);
+		this.addBehaviour(sopb);
 	}
 
 	private class SendOutPingsBehaviour extends SequentialBehaviour implements
 			Serializable {
 		private static final long serialVersionUID = 1L;
 		private AID pongAgent = null;
+		private int frequency;
+		
+		public SendOutPingsBehaviour(int frequency){
+			this.frequency = frequency;	
+		}
 
 		private void findAndSetPongAgent() {
 			DFAgentDescription template = new DFAgentDescription();
@@ -51,7 +70,7 @@ public class PingAgent extends Agent {
 					return pongAgent == null ? false : true;
 				}
 			});
-			this.addSubBehaviour(new TickerBehaviour((Agent) this.myAgent, 2000) {
+			this.addSubBehaviour(new TickerBehaviour((Agent) this.myAgent, frequency) {
 
 				@Override
 				protected void onTick() {
@@ -72,4 +91,19 @@ public class PingAgent extends Agent {
 		}
 	}
 
+	private class ReplyToAnswerBehaviour extends CyclicBehaviour {
+		private static final long serialVersionUID = -5018397038252984135L;
+		private long lastRequest = 0;
+		private static final int ONE_SECOND = 1000;
+
+		public void action() {
+			MessageTemplate tmp = MessageTemplate
+					.MatchPerformative(ACLMessage.REFUSE);
+			ACLMessage m = receive(tmp);
+			if (m != null) {
+				System.out.println("Oops I am going to fast. Adjusting now");
+				changeBehaviourToGoSlower();
+			}
+		}
+	}
 }
