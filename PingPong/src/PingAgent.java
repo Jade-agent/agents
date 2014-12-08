@@ -14,18 +14,46 @@ import jade.lang.acl.MessageTemplate;
 import jade.util.leap.Serializable;
 
 public class PingAgent extends Agent {
-	
+
 	private SendOutPingsBehaviour sopb;
 	private int frequency = 100;
-
+	private AID pongAgent;
 
 	public void setup() {
+		this.addBehaviour(new SimpleBehaviour() {
+
+			public void action() {
+				findAndSetPongAgent();
+			}
+
+			public boolean done() {
+				return pongAgent == null ? false : true;
+			}
+		});
 		sopb = new SendOutPingsBehaviour(frequency);
 		this.addBehaviour(sopb);
 		this.addBehaviour(new ReplyToAnswerBehaviour());
 	}
-	
-	private void changeBehaviourToGoSlower(){
+
+	private void findAndSetPongAgent() {
+		DFAgentDescription template = new DFAgentDescription();
+		ServiceDescription sd = new ServiceDescription();
+		sd.setType("Reply-To-Ping-Service");
+		template.addServices(sd);
+
+		try {
+			DFAgentDescription[] dfds = DFService.search(this, template);
+
+			if (dfds.length > 0) {
+				pongAgent = dfds[0].getName();
+				System.out.println("PA found: " + pongAgent);
+			}
+		} catch (FIPAException fe) {
+			fe.printStackTrace();
+		}
+	}
+
+	private void changeBehaviourToGoSlower() {
 		this.removeBehaviour(sopb);
 		this.frequency *= 2;
 		System.out.println("New frequency in ms:" + this.frequency);
@@ -36,45 +64,15 @@ public class PingAgent extends Agent {
 	private class SendOutPingsBehaviour extends SequentialBehaviour implements
 			Serializable {
 		private static final long serialVersionUID = 1L;
-		private AID pongAgent = null;
 		private int frequency;
-		
-		public SendOutPingsBehaviour(int frequency){
-			this.frequency = frequency;	
-		}
 
-		private void findAndSetPongAgent() {
-			DFAgentDescription template = new DFAgentDescription();
-			ServiceDescription sd = new ServiceDescription();
-			sd.setType("Reply-To-Ping-Service");
-			template.addServices(sd);
-
-			try {
-				DFAgentDescription[] dfds = DFService.search(this.myAgent,
-						template);
-
-				if (dfds.length > 0) {
-					pongAgent = dfds[0].getName();
-					System.out.println("PA found: " + pongAgent);
-				}
-			} catch (FIPAException fe) {
-				fe.printStackTrace();
-			}
+		public SendOutPingsBehaviour(int frequency) {
+			this.frequency = frequency;
 		}
 
 		public void onStart() {
-			this.addSubBehaviour(new SimpleBehaviour() {
-
-				public void action() {
-					findAndSetPongAgent();
-				}
-
-				public boolean done() {
-					return pongAgent == null ? false : true;
-				}
-			});
-			this.addSubBehaviour(new TickerBehaviour((Agent) this.myAgent, frequency) {
-
+			this.addSubBehaviour(new TickerBehaviour((Agent) this.myAgent,
+					frequency) {
 				@Override
 				protected void onTick() {
 					jade.lang.acl.ACLMessage message = new jade.lang.acl.ACLMessage(
@@ -82,15 +80,13 @@ public class PingAgent extends Agent {
 					message.addReceiver(pongAgent);
 					message.setContent("Ping");
 					this.myAgent.send(message);
-
 				}
-
 			});
 		}
 
 		public void reset() {
 			super.reset();
-			this.pongAgent = null;
+			pongAgent = null;
 		}
 	}
 
