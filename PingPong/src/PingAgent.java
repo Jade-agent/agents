@@ -16,17 +16,20 @@ import jade.util.leap.Serializable;
 public class PingAgent extends Agent {
 	
 	private SendOutPingsBehaviour sopb;
+	private int frequency = 100;
 
 
 	public void setup() {
-		sopb = new SendOutPingsBehaviour(100);
+		sopb = new SendOutPingsBehaviour(frequency);
 		this.addBehaviour(sopb);
 		this.addBehaviour(new ReplyToAnswerBehaviour());
 	}
 	
 	private void changeBehaviourToGoSlower(){
 		this.removeBehaviour(sopb);
-		sopb = new SendOutPingsBehaviour(3000);
+		this.frequency *= 2;
+		System.out.println("New frequency in ms:" + this.frequency);
+		sopb = new SendOutPingsBehaviour(this.frequency);
 		this.addBehaviour(sopb);
 	}
 
